@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+message Item {
+  int32 id = 1;
+  string value = 2;
+}
+
+message GetAllItemsRequest {
+  
+}
+
+message GetAllItemsResponse {
+  repeated Item items = 1;
+}
+
+message CreateItemRequest {
+  string value = 1;
+}
+
+message CreateItemResponse {
+  Item item = 1;
+}
+
+message RemoveItemRequest {
+  int32 id = 1;
+}
+
+message RemoveItemResponse {
+  Item deleted = 1;
+}
+
+message EditItemRequest {
+  int32 id = 1;
+  string value = 2;
+}
+
+message EditItemResponse {
+  Item item = 1;
+}
+
+service ItemService {
+  rpc GetAllItems(GetAllItemsRequest) returns (GetAllItemsResponse);
+  rpc CreateItem(CreateItemRequest) returns (CreateItemResponse);
+  rpc RemoveItem(RemoveItemRequest) returns (RemoveItemResponse);
+  rpc EditItem(EditItemRequest) returns (EditItemResponse);
+}

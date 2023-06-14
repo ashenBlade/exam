@@ -21,7 +21,7 @@ fun AllItemsPage(viewModel: AllItemsViewModel) {
 @Composable
 fun AllItemsPageInner(x: ArrayList<Item>) {
     LazyColumn {
-        items(x) {
+        items(x.sortedBy { it.id }) {
             ItemRecord(item = it)
         }
     }

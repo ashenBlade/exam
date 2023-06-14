@@ -1,6 +1,7 @@
 using Exam.Database;
 using Exam.Web.Grpc;
 using Exam.Web.Options;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -11,6 +12,21 @@ builder.Services
        .Bind(builder.Configuration.GetRequiredSection(DatabaseOptions.SectionName))
        .ValidateDataAnnotations()
        .ValidateOnStart();
+
+builder.Services.AddGrpc();
+
+builder.WebHost.ConfigureKestrel(kestrel =>
+{
+    kestrel.ListenAnyIP(8080, opt =>
+    {
+        opt.Protocols = HttpProtocols.Http2;
+    });
+    kestrel.ListenAnyIP(8081, opt =>
+    {
+        opt.Protocols = HttpProtocols.Http2;
+    });
+});
+
 
 builder.Services.AddDbContext<ApplicationDbContext>((x, context) =>
 {
@@ -32,7 +48,9 @@ await using (var scope = app.Services.CreateAsyncScope())
     }
 }
 
-app.MapGrpcService<ItemGrpcService>();
+app.UseGrpcWeb();
+app.MapGrpcService<ItemGrpcService>()
+   .EnableGrpcWeb();
 
 app.MapGet("/", () => "Hello World!");
 

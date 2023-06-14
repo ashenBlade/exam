@@ -18,9 +18,10 @@ public class ItemGrpcService: ItemService.ItemServiceBase
     public override async Task<CreateItemResponse> CreateItem(CreateItemRequest request, ServerCallContext context)
     {
         _logger.LogInformation("Запрос на создение нового item со значением {Value}", request.Value);
-        var item = new Database.DatabaseItem() {Value = request.Value};
+        var item = new DatabaseItem() {Value = request.Value};
         var result = await _context.Items.AddAsync(item, context.CancellationToken);
         var e = result.Entity;
+        await _context.SaveChangesAsync();
         _logger.LogInformation("Item со значением {Value} создан. Присвоен ID: {Id}", e.Value, e.Id);
         return new CreateItemResponse()
         {
@@ -41,16 +42,15 @@ public class ItemGrpcService: ItemService.ItemServiceBase
             throw new InvalidOperationException($"Item с ID: {request.Id} не существует");
         }
 
-        var updated = new Database.DatabaseItem() {Id = request.Id, Value = request.Value};
-        _context.Items.Update(updated);
+        oldItem.Value = request.Value;
         await _context.SaveChangesAsync();
         _logger.LogInformation("Данные обновлены");
         return new EditItemResponse()
         {
             Item = new ()
             {
-                Id = updated.Id,
-                Value = updated.Value
+                Id = oldItem.Id,
+                Value = oldItem.Value
             }
         };
     }
