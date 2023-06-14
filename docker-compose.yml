@@ -4,3 +4,12 @@
     build:
       context: .
       dockerfile: Exam.Web/Dockerfile
+  
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DATABASE: postgres
