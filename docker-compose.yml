@@ -1,0 +1,6 @@
+﻿services:
+  exam.web:
+    image: exam.web
+    build:
+      context: .
+      dockerfile: Exam.Web/Dockerfile
